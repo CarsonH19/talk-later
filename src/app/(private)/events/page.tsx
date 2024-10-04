@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { CalendarPlus, CalendarRange } from "lucide-react";
 import Link from "next/link";
-import { db } from "@/app/db/drizzle";
+import { db } from "@/db/drizzle";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 // import { eq } from "drizzle-orm";
@@ -30,7 +30,11 @@ const EventsPage = async () => {
         </Button>
       </div>
       {events.length > 0 ? (
-        <h1>Events</h1>
+        <div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(400px,1fr))]">
+          {events.map(event => (
+            <EventCard key={event.id} {...events} />
+          ))}          
+        </div>
       ) : (
         <div className="flex flex-col items-center gap-4">
           <CalendarRange className="size-16 mx-auto" />
