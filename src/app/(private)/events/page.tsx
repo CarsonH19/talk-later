@@ -16,6 +16,8 @@ import {
 import { formatEventDescription } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 
+export const revalidate = 0;
+
 const EventsPage = async () => {
   const { userId, redirectToSignIn } = await auth();
 

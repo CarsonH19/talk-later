@@ -8,6 +8,13 @@ type Props = {
   params: { eventId: string };
 };
 
+// revalidate = 0
+// The page will never be statically regenerated after the initial request.
+// Every request will result in a new server-side rendering (SSR) of the page.
+// The page will always be dynamically rendered, not served from the cache.
+
+export const revalidate = 0;
+
 async function EditEventPage({ params: { eventId } }: Props) {
   const { userId, redirectToSignIn } = auth();
   if (!userId) return redirectToSignIn();
