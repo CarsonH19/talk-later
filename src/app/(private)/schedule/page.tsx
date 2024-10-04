@@ -4,6 +4,8 @@ import { auth } from "@clerk/nextjs/server";
 import { db } from "@/db/drizzle";
 import ScheduleForm from "@/components/forms/ScheduleForm";
 
+export const revalidate = 0;
+
 async function SchedulePage() {
   const { userId, redirectToSignIn } = auth();
   if (userId == null) return redirectToSignIn();
