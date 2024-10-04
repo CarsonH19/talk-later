@@ -12,7 +12,6 @@ export async function createEvent(
   unsafeData: z.infer<typeof eventFormSchema>
 ): Promise<{ error: boolean } | undefined> {
   const { userId } = await auth();
-  unsafeData.name = "";
   const { success, data } = eventFormSchema.safeParse(unsafeData);
 
   if (!success || userId === null) {
