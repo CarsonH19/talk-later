@@ -18,7 +18,7 @@ const CopyEventButton = ({
   ...buttonProps
 }: CopyEventButtonProps) => {
   const [copyState, setCopyState] = useState<CopyState>("idle");
-  const CopyIcon = getCopyIcon(copyState);
+  getCopyIcon(copyState);
   return (
     <Button
       {...buttonProps}
