@@ -35,26 +35,26 @@ export async function getValidTimesFromSchedule(
 
   if (schedule == null) return [];
 
-  const groupedAvailabilities = Object.groupBy(
-    schedule.availabilities,
-    a => a.dayOfWeek
-  )
-
-  // function groupBy(array, getKey) {
-  //   return array.reduce((acc, item) => {
-  //     const key = getKey(item);
-  //     if (!acc[key]) {
-  //       acc[key] = [];
-  //     }
-  //     acc[key].push(item);
-  //     return acc;
-  //   }, {});
-  // }
-
-  // const groupedAvailabilities = groupBy(
+  // const groupedAvailabilities = Object.groupBy(
   //   schedule.availabilities,
-  //   (a) => a.dayOfWeek
-  // );
+  //   a => a.dayOfWeek
+  // )
+
+  function groupBy(array, getKey) {
+    return array.reduce((acc, item) => {
+      const key = getKey(item);
+      if (!acc[key]) {
+        acc[key] = [];
+      }
+      acc[key].push(item);
+      return acc;
+    }, {});
+  }
+
+  const groupedAvailabilities = groupBy(
+    schedule.availabilities,
+    (a) => a.dayOfWeek
+  );
 
   const eventTimes = await getCalendarEventTimes(event.clerkUserId, {
     start,
