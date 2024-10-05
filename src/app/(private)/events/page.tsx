@@ -1,32 +1,31 @@
-import { Button } from "@/components/ui/button";
-import { CalendarPlus, CalendarRange } from "lucide-react";
-import Link from "next/link";
-import { db } from "@/db/drizzle";
-import { auth } from "@clerk/nextjs/server";
-import CopyEventButton from "@/components/CopyEventButton";
-// import { redirect } from "next/navigation";
+import { CopyEventButton } from "@/components/CopyEventButton"
+import { Button } from "@/components/ui/button"
 import {
-  CardDescription,
-  CardHeader,
-  CardTitle,
   Card,
   CardContent,
+  CardDescription,
   CardFooter,
-} from "@/components/ui/card";
-import { formatEventDescription } from "@/lib/formatters";
-import { cn } from "@/lib/utils";
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { db } from "@/drizzle/db"
+import { formatEventDescription } from "@/lib/formatters"
+import { cn } from "@/lib/utils"
+import { auth } from "@clerk/nextjs/server"
+import { CalendarPlus, CalendarRange } from "lucide-react"
+import Link from "next/link"
 
-export const revalidate = 0;
+export const revalidate = 0
 
-const EventsPage = async () => {
-  const { userId, redirectToSignIn } = await auth();
+export default async function EventsPage() {
+  const { userId, redirectToSignIn } = auth()
 
-  if (!userId) return redirectToSignIn();
+  if (userId == null) return redirectToSignIn()
 
   const events = await db.query.EventTable.findMany({
     where: ({ clerkUserId }, { eq }) => eq(clerkUserId, userId),
     orderBy: ({ createdAt }, { desc }) => desc(createdAt),
-  });
+  })
 
   return (
     <>
@@ -36,14 +35,13 @@ const EventsPage = async () => {
         </h1>
         <Button asChild>
           <Link href="/events/new">
-            <CalendarPlus className="mr-4 size-6" />
-            New Event
+            <CalendarPlus className="mr-4 size-6" /> New Event
           </Link>
         </Button>
       </div>
       {events.length > 0 ? (
         <div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(400px,1fr))]">
-          {events.map((event) => (
+          {events.map(event => (
             <EventCard key={event.id} {...event} />
           ))}
         </div>
@@ -52,28 +50,25 @@ const EventsPage = async () => {
           <CalendarRange className="size-16 mx-auto" />
           You do not have any events yet. Create your first event to get
           started!
-          <Button className="text-lg" size="lg" asChild>
+          <Button size="lg" className="text-lg" asChild>
             <Link href="/events/new">
-              <CalendarPlus className="mr-4 size-6" />
-              New Event
+              <CalendarPlus className="mr-4 size-6" /> New Event
             </Link>
           </Button>
         </div>
       )}
     </>
-  );
-};
-
-export default EventsPage;
+  )
+}
 
 type EventCardProps = {
-  id: string;
-  isActive: boolean;
-  name: string;
-  description: string | null;
-  durationInMinutes: number;
-  clerkUserId: string;
-};
+  id: string
+  isActive: boolean
+  name: string
+  description: string | null
+  durationInMinutes: number
+  clerkUserId: string
+}
 
 function EventCard({
   id,
@@ -109,5 +104,5 @@ function EventCard({
         </Button>
       </CardFooter>
     </Card>
-  );
+  )
 }

@@ -6,5 +6,5 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function timeToInt(time: string) {
-  return parseFloat(time.replace(":", "."));
+  return parseFloat(time.replace(":", "."))
 }

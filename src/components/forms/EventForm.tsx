@@ -1,9 +1,9 @@
-"use client";
+"use client"
 
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { eventFormSchema } from "@/schema/events";
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { eventFormSchema } from "@/schema/events"
 import {
   Form,
   FormControl,
@@ -12,57 +12,57 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../ui/form";
-import { Input } from "../ui/input";
-import { Textarea } from "../ui/textarea";
-import { Button } from "../ui/button";
-import Link from "next/link";
-import { Switch } from "../ui/switch";
-import { createEvent, updateEvent, deleteEvent } from "@/server/actions/events";
+} from "../ui/form"
+import { Input } from "../ui/input"
+import Link from "next/link"
+import { Button } from "../ui/button"
+import { Textarea } from "../ui/textarea"
+import { Switch } from "../ui/switch"
+import { createEvent, deleteEvent, updateEvent } from "@/server/actions/events"
 import {
   AlertDialog,
   AlertDialogContent,
   AlertDialogDescription,
-  AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle,
   AlertDialogTrigger,
+  AlertDialogTitle,
+  AlertDialogFooter,
   AlertDialogCancel,
   AlertDialogAction,
-} from "../ui/alert-dialog";
-import { useTransition } from "react";
+} from "../ui/alert-dialog"
+import { useState, useTransition } from "react"
 
-type Props = {
+export function EventForm({
+  event,
+}: {
   event?: {
-    id: string;
-    name: string;
-    description?: string;
-    durationInMinutes: number;
-    isActive: boolean;
-  };
-};
-
-function EventForm({ event }: Props) {
-  const [isDeletePending, startDeleteTransition] = useTransition();
+    id: string
+    name: string
+    description?: string
+    durationInMinutes: number
+    isActive: boolean
+  }
+}) {
+  const [isDeletePending, startDeleteTransition] = useTransition()
   const form = useForm<z.infer<typeof eventFormSchema>>({
     resolver: zodResolver(eventFormSchema),
     defaultValues: event ?? {
       isActive: true,
       durationInMinutes: 30,
     },
-  });
+  })
 
-  const onSubmit = async (values: z.infer<typeof eventFormSchema>) => {
+  async function onSubmit(values: z.infer<typeof eventFormSchema>) {
     const action =
-      event == null ? createEvent : updateEvent.bind(null, event.id);
-    const data = await action(values);
+      event == null ? createEvent : updateEvent.bind(null, event.id)
+    const data = await action(values)
 
     if (data?.error) {
       form.setError("root", {
-        message: "there was an error saving your event",
-      });
+        message: "There was an error saving your event",
+      })
     }
-  };
+  }
 
   return (
     <Form {...form}>
@@ -138,7 +138,6 @@ function EventForm({ event }: Props) {
               <FormDescription>
                 Inactive events will not be visible for users to book
               </FormDescription>
-              <FormMessage />
             </FormItem>
           )}
         />
@@ -155,10 +154,10 @@ function EventForm({ event }: Props) {
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle> Are you sure?</AlertDialogTitle>
+                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                   <AlertDialogDescription>
                     This action cannot be undone. This will permanently delete
-                    this event.
+                    your this event.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -168,14 +167,14 @@ function EventForm({ event }: Props) {
                     variant="destructive"
                     onClick={() => {
                       startDeleteTransition(async () => {
-                        const data = await deleteEvent(event.id);
+                        const data = await deleteEvent(event.id)
 
                         if (data?.error) {
                           form.setError("root", {
                             message: "There was an error deleting your event",
-                          });
+                          })
                         }
-                      });
+                      })
                     }}
                   >
                     Delete
@@ -184,6 +183,7 @@ function EventForm({ event }: Props) {
               </AlertDialogContent>
             </AlertDialog>
           )}
+
           <Button
             disabled={isDeletePending || form.formState.isSubmitting}
             type="button"
@@ -196,13 +196,10 @@ function EventForm({ event }: Props) {
             disabled={isDeletePending || form.formState.isSubmitting}
             type="submit"
           >
-            {" "}
             Save
           </Button>
         </div>
       </form>
     </Form>
-  );
+  )
 }
-
-export default EventForm;

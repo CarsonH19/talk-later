@@ -1,18 +1,19 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { auth } from "@clerk/nextjs/server";
-import { db } from "@/db/drizzle";
-import ScheduleForm from "@/components/forms/ScheduleForm";
+import { EventForm } from "@/components/forms/EventForm"
+import { ScheduleForm } from "@/components/forms/ScheduleForm"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { db } from "@/drizzle/db"
+import { auth } from "@clerk/nextjs/server"
 
-export const revalidate = 0;
+export const revalidate = 0
 
-async function SchedulePage() {
-  const { userId, redirectToSignIn } = auth();
-  if (userId == null) return redirectToSignIn();
+export default async function SchedulePage() {
+  const { userId, redirectToSignIn } = auth()
+  if (userId == null) return redirectToSignIn()
 
   const schedule = await db.query.ScheduleTable.findFirst({
     where: ({ clerkUserId }, { eq }) => eq(clerkUserId, userId),
     with: { availabilities: true },
-  });
+  })
 
   return (
     <Card className="max-w-md mx-auto">
@@ -23,7 +24,5 @@ async function SchedulePage() {
         <ScheduleForm schedule={schedule} />
       </CardContent>
     </Card>
-  );
+  )
 }
-
-export default SchedulePage;

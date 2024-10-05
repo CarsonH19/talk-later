@@ -6,4 +6,4 @@ export const DAYS_OF_WEEK_IN_ORDER = [
   "friday",
   "saturday",
   "sunday",
-] as const;
+] as const

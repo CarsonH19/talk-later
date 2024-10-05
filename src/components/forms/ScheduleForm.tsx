@@ -1,84 +1,83 @@
-"use client";
+"use client"
 
-import { useFieldArray, useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useFieldArray, useForm } from "react-hook-form"
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from "../ui/form";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import { Fragment, useState } from "react";
-import { DAYS_OF_WEEK_IN_ORDER } from "@/data/constants";
-import { scheduleFormSchema } from "@/schema/schedule";
-import { timeToInt } from "@/lib/utils";
+} from "../ui/form"
+import { Button } from "../ui/button"
+import { createEvent, deleteEvent, updateEvent } from "@/server/actions/events"
+import { DAYS_OF_WEEK_IN_ORDER } from "@/data/constants"
+import { scheduleFormSchema } from "@/schema/schedule"
+import { timeToInt } from "@/lib/utils"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
-import { formatTimezoneOffset } from "@/lib/formatters";
-import { Plus, X } from "lucide-react";
-import { saveSchedule } from "@/server/actions/schedule";
+} from "../ui/select"
+import { formatTimezoneOffset } from "@/lib/formatters"
+import { Fragment, useState } from "react"
+import { Plus, X } from "lucide-react"
+import { Input } from "../ui/input"
+import { saveSchedule } from "@/server/actions/schedule"
 
 type Availability = {
-  startTime: string;
-  endTime: string;
-  dayOfWeek: (typeof DAYS_OF_WEEK_IN_ORDER)[number];
-};
+  startTime: string
+  endTime: string
+  dayOfWeek: (typeof DAYS_OF_WEEK_IN_ORDER)[number]
+}
 
-type Props = {
+export function ScheduleForm({
+  schedule,
+}: {
   schedule?: {
-    timezone: string;
-    availabilities: Availability[];
-  };
-};
-
-function ScheduleForm({ schedule }: Props) {
-  const [successMessage, setSuccessMessage] = useState<string>();
+    timezone: string
+    availabilities: Availability[]
+  }
+}) {
+  const [successMessage, setSuccessMessage] = useState<string>()
   const form = useForm<z.infer<typeof scheduleFormSchema>>({
     resolver: zodResolver(scheduleFormSchema),
     defaultValues: {
       timezone:
         schedule?.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone,
       availabilities: schedule?.availabilities.toSorted((a, b) => {
-        return timeToInt(a.startTime) - timeToInt(b.startTime);
+        return timeToInt(a.startTime) - timeToInt(b.startTime)
       }),
     },
-  });
+  })
 
   const {
     append: addAvailability,
     remove: removeAvailability,
     fields: availabilityFields,
-  } = useFieldArray({
-    name: "availabilities",
-    control: form.control,
-  });
+  } = useFieldArray({ name: "availabilities", control: form.control })
 
   const groupedAvailabilityFields = Object.groupBy(
     availabilityFields.map((field, index) => ({ ...field, index })),
-    (availability) => availability.dayOfWeek
-  );
+    availability => availability.dayOfWeek
+  )
 
-  const onSubmit = async (values: z.infer<typeof scheduleFormSchema>) => {
-    const data = await saveSchedule(values);
+  async function onSubmit(values: z.infer<typeof scheduleFormSchema>) {
+    const data = await saveSchedule(values)
 
     if (data?.error) {
       form.setError("root", {
-        message: "there was an error saving your schedule",
-      });
+        message: "There was an error saving your schedule",
+      })
     } else {
-      setSuccessMessage("Schedule saved!");
+      setSuccessMessage("Schedule saved!")
     }
-  };
+  }
 
   return (
     <Form {...form}>
@@ -92,9 +91,7 @@ function ScheduleForm({ schedule }: Props) {
           </div>
         )}
         {successMessage && (
-          <div className="text-green-500 text-sm">
-            {successMessage}
-          </div>
+          <div className="text-green-500 text-sm">{successMessage}</div>
         )}
         <FormField
           control={form.control}
@@ -105,11 +102,11 @@ function ScheduleForm({ schedule }: Props) {
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue></SelectValue>
+                    <SelectValue />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {Intl.supportedValuesOf("timeZone").map((timezone) => (
+                  {Intl.supportedValuesOf("timeZone").map(timezone => (
                     <SelectItem key={timezone} value={timezone}>
                       {timezone}
                       {` (${formatTimezoneOffset(timezone)})`}
@@ -123,7 +120,7 @@ function ScheduleForm({ schedule }: Props) {
         />
 
         <div className="grid grid-cols-[auto,1fr] gap-y-6 gap-x-4">
-          {DAYS_OF_WEEK_IN_ORDER.map((dayOfWeek) => (
+          {DAYS_OF_WEEK_IN_ORDER.map(dayOfWeek => (
             <Fragment key={dayOfWeek}>
               <div className="capitalize text-sm font-semibold">
                 {dayOfWeek.substring(0, 3)}
@@ -138,7 +135,7 @@ function ScheduleForm({ schedule }: Props) {
                       dayOfWeek,
                       startTime: "9:00",
                       endTime: "17:00",
-                    });
+                    })
                   }}
                 >
                   <Plus className="size-full" />
@@ -161,10 +158,10 @@ function ScheduleForm({ schedule }: Props) {
                                   {...field}
                                 />
                               </FormControl>
-                              <FormMessage />
                             </FormItem>
                           )}
                         />
+                        -
                         <FormField
                           control={form.control}
                           name={`availabilities.${field.index}.endTime`}
@@ -179,7 +176,6 @@ function ScheduleForm({ schedule }: Props) {
                                   {...field}
                                 />
                               </FormControl>
-                              <FormMessage />
                             </FormItem>
                           )}
                         />
@@ -228,7 +224,5 @@ function ScheduleForm({ schedule }: Props) {
         </div>
       </form>
     </Form>
-  );
+  )
 }
-
-export default ScheduleForm;

@@ -1,7 +1,4 @@
-import React from "react";
-import { db } from "@/db/drizzle";
-import { notFound } from "next/navigation";
-import { clerkClient } from "@clerk/nextjs/server";
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -9,28 +6,29 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-import { formatEventDescription } from "@/lib/formatters";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+} from "@/components/ui/card"
+import { db } from "@/drizzle/db"
+import { formatEventDescription } from "@/lib/formatters"
+import { clerkClient } from "@clerk/nextjs/server"
+import Link from "next/link"
+import { notFound } from "next/navigation"
 
-export const revalidate = 0;
+export const revalidate = 0
 
-async function BookingPage({
+export default async function BookingPage({
   params: { clerkUserId },
 }: {
-  params: { clerkUserId: string };
+  params: { clerkUserId: string }
 }) {
   const events = await db.query.EventTable.findMany({
     where: ({ clerkUserId: userIdCol, isActive }, { eq, and }) =>
       and(eq(userIdCol, clerkUserId), eq(isActive, true)),
     orderBy: ({ name }, { asc, sql }) => asc(sql`lower(${name})`),
-  });
+  })
 
-  if (events.length === 0) return notFound();
+  if (events.length === 0) return notFound()
 
-  const { fullName } = await clerkClient().users.getUser(clerkUserId);
+  const { fullName } = await clerkClient().users.getUser(clerkUserId)
 
   return (
     <div className="max-w-5xl mx-auto">
@@ -42,33 +40,31 @@ async function BookingPage({
         event to my calendar.
       </div>
       <div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(300px,1fr))]">
-        {events.map((event) => (
+        {events.map(event => (
           <EventCard key={event.id} {...event} />
         ))}
       </div>
     </div>
-  );
+  )
 }
 
-export default BookingPage;
-
 type EventCardProps = {
-  id: string;
-  name: string;
-  description: string | null;
-  durationInMinutes: number;
-  clerkUserId: string;
-};
+  id: string
+  name: string
+  clerkUserId: string
+  description: string | null
+  durationInMinutes: number
+}
 
 function EventCard({
   id,
   name,
-  clerkUserId,
   description,
+  clerkUserId,
   durationInMinutes,
 }: EventCardProps) {
   return (
-    <Card className={cn("flex flex-col")}>
+    <Card className="flex flex-col">
       <CardHeader>
         <CardTitle>{name}</CardTitle>
         <CardDescription>
@@ -82,5 +78,5 @@ function EventCard({
         </Button>
       </CardFooter>
     </Card>
-  );
+  )
 }

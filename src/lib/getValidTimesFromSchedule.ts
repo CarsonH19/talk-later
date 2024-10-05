@@ -1,6 +1,6 @@
 import { DAYS_OF_WEEK_IN_ORDER } from "@/data/constants";
-import { db } from "@/db/drizzle";
-import { ScheduleAvailabilityTable } from "@/db/schema";
+import { db } from "@/drizzle/db";
+import { ScheduleAvailabilityTable } from "@/drizzle/schema";
 import { getCalendarEventTimes } from "@/server/googleCalendar";
 import {
   addMinutes,
@@ -35,26 +35,26 @@ export async function getValidTimesFromSchedule(
 
   if (schedule == null) return [];
 
-  const groupedAvailabilities = Object.groupBy(
-    schedule.availabilities,
-    a => a.dayOfWeek
-  )
-
-  // function groupBy(array, getKey) {
-  //   return array.reduce((acc, item) => {
-  //     const key = getKey(item);
-  //     if (!acc[key]) {
-  //       acc[key] = [];
-  //     }
-  //     acc[key].push(item);
-  //     return acc;
-  //   }, {});
-  // }
-
-  // const groupedAvailabilities = groupBy(
+  // const groupedAvailabilities = Object.groupBy(
   //   schedule.availabilities,
-  //   (a) => a.dayOfWeek
-  // );
+  //   a => a.dayOfWeek
+  // )
+
+  function groupBy(array, getKey) {
+    return array.reduce((acc, item) => {
+      const key = getKey(item);
+      if (!acc[key]) {
+        acc[key] = [];
+      }
+      acc[key].push(item);
+      return acc;
+    }, {});
+  }
+
+  const groupedAvailabilities = groupBy(
+    schedule.availabilities,
+    (a) => a.dayOfWeek
+  );
 
   const eventTimes = await getCalendarEventTimes(event.clerkUserId, {
     start,
