@@ -15,6 +15,8 @@ import { formatEventDescription } from "@/lib/formatters";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
+export const revalidate = 0;
+
 async function BookingPage({
   params: { clerkUserId },
 }: {
