@@ -6,30 +6,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
-import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
-import Link from "next/link";
-import { Switch } from "../ui/switch";
-import { createEvent, updateEvent, deleteEvent } from "@/server/actions/events";
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-  AlertDialogCancel,
-  AlertDialogAction,
-} from "../ui/alert-dialog";
-import { Fragment, useState, useTransition } from "react";
+import { Fragment, useState } from "react";
 import { DAYS_OF_WEEK_IN_ORDER } from "@/data/constants";
 import { scheduleFormSchema } from "@/schema/schedule";
 import { timeToInt } from "@/lib/utils";
