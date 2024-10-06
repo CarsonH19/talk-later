@@ -1,4 +1,4 @@
-import "server-only"
+import "use-server"
 import { clerkClient } from "@clerk/nextjs/server"
 import { google } from "googleapis"
 import { addMinutes, endOfDay, startOfDay } from "date-fns"

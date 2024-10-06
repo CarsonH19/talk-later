@@ -6,7 +6,7 @@ import { eventFormSchema } from "@/schema/events"
 import { auth } from "@clerk/nextjs/server"
 import { and, eq } from "drizzle-orm"
 import { redirect } from "next/navigation"
-import "server-only"
+import "use-server"
 import { z } from "zod"
 
 export async function createEvent(
