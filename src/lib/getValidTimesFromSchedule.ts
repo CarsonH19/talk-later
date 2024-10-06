@@ -35,9 +35,9 @@ export async function getValidTimesFromSchedule(
 
   if (schedule == null) return [];
 
-  const groupBy = (array, key) => {
+  const groupBy = (array, keyMapper) => {
     return array.reduce((result, currentValue) => {
-      const groupKey = currentValue[key];
+      const groupKey = keyMapper(currentValue); // Use keyMapper to transform the dayOfWeek
       if (!result[groupKey]) {
         result[groupKey] = [];
       }
@@ -50,6 +50,9 @@ export async function getValidTimesFromSchedule(
     schedule.availabilities,
     (a) => a.dayOfWeek
   );
+
+  console.log("monday", groupedAvailabilities.monday);
+
 
   const eventTimes = await getCalendarEventTimes(event.clerkUserId, {
     start,

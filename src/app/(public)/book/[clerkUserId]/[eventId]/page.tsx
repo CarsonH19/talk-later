@@ -1,5 +1,5 @@
-import { MeetingForm } from "@/components/forms/MeetingForm"
-import { Button } from "@/components/ui/button"
+import { MeetingForm } from "@/components/forms/MeetingForm";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -7,47 +7,47 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { db } from "@/drizzle/db"
-import { getValidTimesFromSchedule } from "@/lib/getValidTimesFromSchedule"
-import { clerkClient } from "@clerk/nextjs/server"
+} from "@/components/ui/card";
+import { db } from "@/drizzle/db";
+import { getValidTimesFromSchedule } from "@/lib/getValidTimesFromSchedule";
+import { clerkClient } from "@clerk/nextjs/server";
 import {
   addMonths,
   eachMinuteOfInterval,
   endOfDay,
   roundToNearestMinutes,
-} from "date-fns"
-import Link from "next/link"
-import { notFound } from "next/navigation"
+} from "date-fns";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 
-export const revalidate = 0
+export const revalidate = 0;
 
 export default async function BookEventPage({
   params: { clerkUserId, eventId },
 }: {
-  params: { clerkUserId: string; eventId: string }
+  params: { clerkUserId: string; eventId: string };
 }) {
   const event = await db.query.EventTable.findFirst({
     where: ({ clerkUserId: userIdCol, isActive, id }, { eq, and }) =>
       and(eq(isActive, true), eq(userIdCol, clerkUserId), eq(id, eventId)),
-  })
+  });
 
-  if (event == null) return notFound()
+  if (event == null) return notFound();
 
-  const calendarUser = await clerkClient().users.getUser(clerkUserId)
+  const calendarUser = await clerkClient().users.getUser(clerkUserId);
   const startDate = roundToNearestMinutes(new Date(), {
     nearestTo: 15,
     roundingMethod: "ceil",
-  })
-  const endDate = endOfDay(addMonths(startDate, 2))
+  });
+  const endDate = endOfDay(addMonths(startDate, 2));
 
   const validTimes = await getValidTimesFromSchedule(
     eachMinuteOfInterval({ start: startDate, end: endDate }, { step: 15 }),
     event
-  )
+  );
 
   if (validTimes.length === 0) {
-    return <NoTimeSlots event={event} calendarUser={calendarUser} />
+    return <NoTimeSlots event={event} calendarUser={calendarUser} />;
   }
 
   return (
@@ -68,15 +68,15 @@ export default async function BookEventPage({
         />
       </CardContent>
     </Card>
-  )
+  );
 }
 
 function NoTimeSlots({
   event,
   calendarUser,
 }: {
-  event: { name: string; description: string | null }
-  calendarUser: { id: string; fullName: string | null }
+  event: { name: string; description: string | null };
+  calendarUser: { id: string; fullName: string | null };
 }) {
   return (
     <Card className="max-w-md mx-auto">
@@ -98,5 +98,5 @@ function NoTimeSlots({
         </Button>
       </CardFooter>
     </Card>
-  )
+  );
 }

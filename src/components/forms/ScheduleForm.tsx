@@ -6,14 +6,12 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "../ui/form"
 import { Button } from "../ui/button"
-import { createEvent, deleteEvent, updateEvent } from "@/server/actions/events"
 import { DAYS_OF_WEEK_IN_ORDER } from "@/data/constants"
 import { scheduleFormSchema } from "@/schema/schedule"
 import { timeToInt } from "@/lib/utils"
@@ -62,7 +60,18 @@ export function ScheduleForm({
     fields: availabilityFields,
   } = useFieldArray({ name: "availabilities", control: form.control })
 
-  const groupedAvailabilityFields = Object.groupBy(
+  const groupBy = (array, keyMapper) => {
+    return array.reduce((result, currentValue) => {
+      const groupKey = keyMapper(currentValue); // Use keyMapper to transform the dayOfWeek
+      if (!result[groupKey]) {
+        result[groupKey] = [];
+      }
+      result[groupKey].push(currentValue);
+      return result;
+    }, {});
+  };
+
+  const groupedAvailabilityFields = groupBy(
     availabilityFields.map((field, index) => ({ ...field, index })),
     availability => availability.dayOfWeek
   )
