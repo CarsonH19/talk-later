@@ -2,7 +2,7 @@
 import { db } from "@/drizzle/db"
 import { getValidTimesFromSchedule } from "@/lib/getValidTimesFromSchedule"
 import { meetingActionSchema } from "@/schema/meetings"
-import "use-server"
+import "server-only"
 import { z } from "zod"
 import { createCalendarEvent } from "../googleCalendar"
 import { redirect } from "next/navigation"

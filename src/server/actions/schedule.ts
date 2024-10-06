@@ -6,7 +6,7 @@ import { scheduleFormSchema } from "@/schema/schedule"
 import { auth } from "@clerk/nextjs/server"
 import { eq } from "drizzle-orm"
 import { BatchItem } from "drizzle-orm/batch"
-import "use-server"
+import "server-only"
 import { z } from "zod"
 
 export async function saveSchedule(
