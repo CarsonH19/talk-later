@@ -1,5 +1,5 @@
-import { CopyEventButton } from "@/components/CopyEventButton"
-import { Button } from "@/components/ui/button"
+import { CopyEventButton } from "@/components/CopyEventButton";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -7,25 +7,25 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { db } from "@/drizzle/db"
-import { formatEventDescription } from "@/lib/formatters"
-import { cn } from "@/lib/utils"
-import { auth } from "@clerk/nextjs/server"
-import { CalendarPlus, CalendarRange } from "lucide-react"
-import Link from "next/link"
+} from "@/components/ui/card";
+import { db } from "@/drizzle/db";
+import { formatEventDescription } from "@/lib/formatters";
+import { cn } from "@/lib/utils";
+import { auth } from "@clerk/nextjs/server";
+import { CalendarPlus, CalendarRange } from "lucide-react";
+import Link from "next/link";
 
-export const revalidate = 0
+export const revalidate = 0;
 
 export default async function EventsPage() {
-  const { userId, redirectToSignIn } = auth()
+  const { userId, redirectToSignIn } = auth();
 
-  if (userId == null) return redirectToSignIn()
+  if (userId == null) return redirectToSignIn();
 
   const events = await db.query.EventTable.findMany({
     where: ({ clerkUserId }, { eq }) => eq(clerkUserId, userId),
     orderBy: ({ createdAt }, { desc }) => desc(createdAt),
-  })
+  });
 
   return (
     <>
@@ -39,9 +39,15 @@ export default async function EventsPage() {
           </Link>
         </Button>
       </div>
+      {events.length > 0 && (
+        <p className="uppercase text-muted-foreground pb-2">
+          Share event links with clients to schedule meetings in your Google
+          Calendar
+        </p>
+      )}
       {events.length > 0 ? (
         <div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(400px,1fr))]">
-          {events.map(event => (
+          {events.map((event) => (
             <EventCard key={event.id} {...event} />
           ))}
         </div>
@@ -58,17 +64,17 @@ export default async function EventsPage() {
         </div>
       )}
     </>
-  )
+  );
 }
 
 type EventCardProps = {
-  id: string
-  isActive: boolean
-  name: string
-  description: string | null
-  durationInMinutes: number
-  clerkUserId: string
-}
+  id: string;
+  isActive: boolean;
+  name: string;
+  description: string | null;
+  durationInMinutes: number;
+  clerkUserId: string;
+};
 
 function EventCard({
   id,
@@ -104,5 +110,5 @@ function EventCard({
         </Button>
       </CardFooter>
     </Card>
-  )
+  );
 }
