@@ -11,7 +11,7 @@ const Header = () => {
 
   return (
     // <div className="absolute top-0 w-full">
-    <header className="items-start flex py-2 border-b bg-card w-full">
+    <header className="z-10 items-start flex py-2 border-b bg-card w-full">
       <nav className="font-medium flex items-center text-sm gap-6 container">
         <div className="flex items-center gap-2 font-semibold mr-auto">
           <CalendarRange className="size-6" />
