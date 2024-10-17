@@ -10,7 +10,7 @@ const socialMedia = [
   },
   {
     id: 2,
-    link: "www.linkedin.com/in/carson-harp-96a678155",
+    link: "www.linkedin.com/in/carson-harp-fullstack",
     img: "/link.svg",
   },
 ];
